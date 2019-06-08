@@ -10,13 +10,14 @@
     "build": "tsc index.ts --out ./dist/index.js",
     "execute": "node ./dist/index.js",
     "start": "yarn build && yarn execute",
-    "watch-dist": "nodemon ./dist/index.js",
-    "watch-src": "tsc index.ts -w  --out ./dist/index.js",
-    "watch": "concurrently 'yarn watch-src' 'yarn watch-dist'"
+    "test": "mocha -r ts-node/register ./tests/*.ts"
   },
   "devDependencies": {
-    "concurrently": "^4.1.0",
-    "nodemon": "^1.19.1",
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.7",
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4",
+    "ts-node": "^8.2.0",
     "typescript": "^3.5.1"
   },
   "dependencies": {}

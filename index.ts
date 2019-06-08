@@ -1,5 +1,5 @@
-function start() {
-  console.log("Hello from typescript & watching again");
+export default function add(a: number, b: number): number {
+  return a + b;
 }
 
-start();
+console.log(add(1, 2));

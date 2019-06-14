@@ -1,5 +1,5 @@
 {
-  "name": "oauth-token-refresher",
+  "name": "axios-token-refresher",
   "version": "1.0.0",
   "description": "This library will add features for axios to refresh token.",
   "main": "index.js",

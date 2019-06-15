@@ -13,7 +13,7 @@ describe('index', () => {
       clientSecret: '',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'authorization': `Basic ${process.env.TOKEN_KEY}`
+        'authorization': `Basic ${process.env.AUTH_SERVER_TOKEN}`
       },
       body: 'grant_type=client_credentials&scope=api'
     };

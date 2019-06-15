@@ -4,19 +4,26 @@ import { TokenRefresherOptions } from "./types";
 
 export default function wrapWithTokenRefresher(axiosClient: AxiosInstance, options: TokenRefresherOptions): AxiosInstance {
 
-  let token = new Token(options);
+  const token = new Token(options);
+
+  const getAuthorizationHeader = (token: TokenInformation) => `${token.type} ${token.value}`
 
   axiosClient.interceptors.request.use(async (config) => {
     const authToken = await token.get();
-    config.headers.common['authorization'] = `${authToken.type} ${authToken.value}`;
+    config.headers.common['authorization'] = getAuthorizationHeader(authToken);
     return config;
   });
 
-  axiosClient.interceptors.response.use((response) => {
-    if (response.status === 401) {
+  axiosClient.interceptors.response.use((response) => response, async (error) => {
+    if (error.response.status === 401) {
+      const authToken = await token.get();
+      const { config: originalRequest } = error;
 
+      originalRequest.headers.Authorization = getAuthorizationHeader(authToken);
+      return axios(originalRequest);
     }
-    return response;
+
+    throw error;
   });
 
   return axiosClient;

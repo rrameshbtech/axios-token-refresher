@@ -1,10 +1,8 @@
 import axios, { AxiosInstance } from 'axios';
 
-import { TokenRefresherOptions } from "./types";
+export default function wrapTokenRefresher(axiosClient: AxiosInstance, refreshToken: TokenRefresherFunc): AxiosInstance {
 
-export default function wrapWithTokenRefresher(axiosClient: AxiosInstance, options: TokenRefresherOptions): AxiosInstance {
-
-  const token = new Token(options);
+  const token = new Token(refreshToken);
 
   const getAuthorizationHeader = (token: TokenInformation) => `${token.type} ${token.value}`
 
@@ -29,30 +27,31 @@ export default function wrapWithTokenRefresher(axiosClient: AxiosInstance, optio
   return axiosClient;
 }
 
-type TokenType = 'Basic' | 'Bearer';
-type RawToken = {
-  access_token: string, token_type: TokenType, expires_in: number, scope: string
+export type TokenType = 'Basic' | 'Bearer';
+export type AuthToken = {
+  accessToken: string, tokenType: TokenType, expiresIn: number
 };
 type TokenInformation = {
   value: string;
   type: TokenType;
 };
+type TokenRefresherFunc = () => Promise<AuthToken>;
 
 class Token {
   private _value: string
   private _type: TokenType
   private _expiresAt: Date
-  private _inprogressRequest: Promise<any>;
+  private _inprogressRequest: Promise<AuthToken>;
 
-  constructor(private _options: TokenRefresherOptions) {
+  constructor(private refreshAuthToken: TokenRefresherFunc) {
   }
 
-  private _set(rawToken: RawToken) {
+  private _set(rawToken: AuthToken) {
     const expirySafeDelay = 2000;
 
-    this._value = rawToken.access_token;
-    this._expiresAt = new Date(new Date().getTime() + (rawToken.expires_in * 1000 - expirySafeDelay));
-    this._type = rawToken.token_type;
+    this._value = rawToken.accessToken;
+    this._expiresAt = new Date(new Date().getTime() + (rawToken.expiresIn * 1000 - expirySafeDelay));
+    this._type = rawToken.tokenType;
   }
 
   private _isValid() {
@@ -62,11 +61,7 @@ class Token {
   private async _refresh() {
     let tokenResponse;
     try {
-      if (!this._inprogressRequest) {
-        this._inprogressRequest = axios.post(this._options.tokenUrl, this._options.body, {
-          headers: this._options.headers
-        });
-      }
+      this._inprogressRequest = this._inprogressRequest || this.refreshAuthToken();
       tokenResponse = await this._inprogressRequest;
     } catch (error) {
       throw error;
@@ -74,7 +69,7 @@ class Token {
       this._inprogressRequest = null;
     }
 
-    this._set(tokenResponse.data);
+    this._set(tokenResponse);
   }
 
   async get(): Promise<TokenInformation> {

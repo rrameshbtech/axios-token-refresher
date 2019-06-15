@@ -10,18 +10,24 @@
     "build": "tsc index.ts --out ./dist/index.js",
     "execute": "node ./dist/index.js",
     "start": "yarn build && yarn execute",
-    "test": "mocha -r ts-node/register ./tests/*.ts --timeout 10000"
+    "integration": "mocha -r ts-node/register ./tests/*.integration.ts --timeout 10000",
+    "test": "mocha -r ts-node/register ./tests/*.test.ts"
   },
   "devDependencies": {
-    "@types/axios": "^0.14.0",
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.0.7",
+    "@types/sinon": "^7.0.13",
     "axios": "^0.19.0",
+    "axios-mock-adapter": "^1.16.0",
     "chai": "^4.2.0",
     "mocha": "^6.1.4",
+    "sinon": "^7.3.2",
     "ts-node": "^8.2.0",
     "typescript": "^3.5.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@types/axios": "^0.14.0",
+    "axios": "^0.19.0"
+  }
 }

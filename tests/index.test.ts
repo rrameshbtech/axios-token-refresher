@@ -23,7 +23,7 @@ describe('Axios Token Refresher', () => {
     }
   );
 
-  let mockTokenRefresherWith1SecondExpiry = sinon.fake.resolves(
+  let mockTokenRefresher1sExpiry = sinon.fake.resolves(
     {
       accessToken: 'test-token',
       expiresIn: 1,
@@ -93,7 +93,7 @@ describe('Axios Token Refresher', () => {
   });
 
   it('should refresh token when existing token is expired', async () => {
-    const axiosClient = wrapTokenRefresher(axios.create(), mockTokenRefresherWith1SecondExpiry);
+    const axiosClient = wrapTokenRefresher(axios.create(), mockTokenRefresher1sExpiry);
     const mockAxios = new MockAdapter(axiosClient);
 
     const expected = 'Yay! Test passed';
@@ -104,11 +104,11 @@ describe('Axios Token Refresher', () => {
       );
 
     const firstResponse = await axiosClient.get('https://www.test.com/scenarios');
-    expect(mockTokenRefresherWith1SecondExpiry.calledOnce).to.be.true;
+    expect(mockTokenRefresher1sExpiry.calledOnce).to.be.true;
     expect(firstResponse.data).to.equal(expected);
 
     const secondResponse = await axiosClient.get('https://www.test.com/scenarios');
-    expect(mockTokenRefresherWith1SecondExpiry.calledTwice).to.be.true;
+    expect(mockTokenRefresher1sExpiry.calledTwice).to.be.true;
     expect(secondResponse.data).to.equal(expected);
   });
 

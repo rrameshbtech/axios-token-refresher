@@ -14,7 +14,7 @@ export default function wrapTokenRefresher(axiosClient: AxiosInstance, refreshTo
 
   axiosClient.interceptors.response.use((response) => response, async (error) => {
     if (error.response.status === 401) {
-      const authToken = await token.get();
+      const authToken = await token.get(true);
       const { config: originalRequest } = error;
 
       originalRequest.headers.Authorization = getAuthorizationHeader(authToken);
@@ -72,8 +72,8 @@ class Token {
     this._set(tokenResponse);
   }
 
-  async get(): Promise<TokenInformation> {
-    if (!this._isValid()) {
+  async get(forceRefresh: boolean = false): Promise<TokenInformation> {
+    if (forceRefresh || !this._isValid()) {
       await this._refresh();
     }
 

@@ -6,11 +6,13 @@
     "noUnusedParameters": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
-    "target": "esnext",
+    "declaration": true,
+    "target": "es5",
     "lib": ["es2017", "es2018", "dom", "es5", "es6", "es7", "esnext"],
     "noImplicitAny": true,
     "moduleResolution": "node",
     "sourceMap": true,
+    "strict": true,
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
@@ -18,6 +20,5 @@
     },
     "types": ["node", "mocha"]
   },
-  "include": ["index.ts", "tests/*"],
-  "exclude": ["node_modules", "build", "dist"]
+  "exclude": ["node_modules", "build", "dist", "tests"]
 }

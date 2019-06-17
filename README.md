@@ -4,17 +4,13 @@ This library enables your axios client to append a valid authorization token to 
 
 ## How to use?
 
-This library is not deployed to npm yet. so you can add below line in your package.json.
+Install the package using NPM as given below.
 
 ```
-scripts: {
-  "axios-token-refresher": "git@github.com:rrameshbtech/axios-token-refresher.git"
-}
+npm i axios-token-refresher
 ```
 
-Then do `npm install`.
-
-Then add below code into your applications.
+Then add the below code into your application.
 
 ```
 const wrapTokenRefresher = require('axios-token-refresher');
@@ -28,7 +24,7 @@ const formatTokenResponse = (response) => ({
 });
 
 /*
-This functions fetches the new authorization token & returns the Promise
+This function fetches the new authorization token & returns the Promise
 This function will be called by refresher to get new token whenever the existing
 token is expired.
 */
@@ -40,7 +36,7 @@ const axiosClientWithToken = wrapTokenRefresher(axios.create(), fetchAuthToken);
 
 ```
 
-Now `axiosClientWithToken` as like normal axios client which will take care of refreshing & adding new auth tokens.
+Now use `axiosClientWithToken` as like normal axios client which will take care of refreshing & attaching valid auth token with your requests.
 
 ## License
 

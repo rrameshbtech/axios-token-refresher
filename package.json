@@ -1,7 +1,7 @@
 {
   "name": "axios-token-refresher",
   "version": "1.0.0",
-  "description": "This library will add features for axios to refresh token.",
+  "description": "This library enables your axios client to append a valid authorization token to your requests.",
   "main": "index.js",
   "author": "Ramesh Ramalingam",
   "license": "MIT",

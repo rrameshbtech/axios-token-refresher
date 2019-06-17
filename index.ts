@@ -1,10 +1,27 @@
 import axios, { AxiosInstance } from 'axios';
 
-export default function wrapTokenRefresher(axiosClient: AxiosInstance, refreshToken: TokenRefresherFunc): AxiosInstance {
 
+export type TokenType = 'Basic' | 'Bearer';
+export type AuthToken = {
+  accessToken: string, tokenType: TokenType, expiresIn: number
+};
+export type TokenRefresherFunc = () => Promise<AuthToken>;
+export interface TokenRefresherOptions  {
+  invalidTokenStatuses: number[]
+};
+type TokenInformation = {
+  value: string;
+  type: TokenType;
+};
+
+export default function wrapTokenRefresher(
+  axiosClient: AxiosInstance, 
+  refreshToken: TokenRefresherFunc, 
+  options: TokenRefresherOptions = {invalidTokenStatuses: [401]}
+): AxiosInstance {
   const token = new Token(refreshToken);
-
   const getAuthorizationHeader = (token: TokenInformation) => `${token.type} ${token.value}`
+  const isInvalidTokenStatus = (errorStatus:number, invalidTokenStatuses:number[]) => invalidTokenStatuses.indexOf(errorStatus) >= 0
 
   axiosClient.interceptors.request.use(async (config) => {
     const authToken = await token.get();
@@ -13,7 +30,8 @@ export default function wrapTokenRefresher(axiosClient: AxiosInstance, refreshTo
   });
 
   axiosClient.interceptors.response.use((response) => response, async (error) => {
-    if (error.response.status === 401) {
+    const { response : {status}} = error;
+    if(isInvalidTokenStatus(status, options.invalidTokenStatuses)) {
       const authToken = await token.get(true);
       const { config: originalRequest } = error;
 
@@ -27,21 +45,11 @@ export default function wrapTokenRefresher(axiosClient: AxiosInstance, refreshTo
   return axiosClient;
 }
 
-export type TokenType = 'Basic' | 'Bearer';
-export type AuthToken = {
-  accessToken: string, tokenType: TokenType, expiresIn: number
-};
-type TokenInformation = {
-  value: string;
-  type: TokenType;
-};
-type TokenRefresherFunc = () => Promise<AuthToken>;
-
 class Token {
-  private _value: string
-  private _type: TokenType
-  private _expiresAt: Date
-  private _inprogressRequest: Promise<AuthToken>;
+  private _value?: string = undefined;
+  private _type?: TokenType = undefined;
+  private _expiresAt?: Date = undefined;
+  private _inprogressRequest?: Promise<AuthToken> = undefined;
 
   constructor(private refreshAuthToken: TokenRefresherFunc) {
   }
@@ -55,7 +63,9 @@ class Token {
   }
 
   private _isValid() {
-    return this._value && this._expiresAt >= new Date();
+    return this._value && 
+      this._expiresAt && 
+      this._expiresAt >= new Date();
   }
 
   private async _refresh() {
@@ -66,7 +76,7 @@ class Token {
     } catch (error) {
       throw error;
     } finally {
-      this._inprogressRequest = null;
+      this._inprogressRequest = undefined;
     }
 
     this._set(tokenResponse);
@@ -77,9 +87,7 @@ class Token {
       await this._refresh();
     }
 
-    return {
-      value: this._value,
-      type: this._type
-    }
+    // @ts-ignore: undefined value assignable error
+    return { value: this._value, type: this._type };  
   }
 }

@@ -7,7 +7,7 @@
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "declaration": true,
-    "target": "es5",
+    "target": "es6",
     "lib": ["es2017", "es2018", "dom", "es5", "es6", "es7", "esnext"],
     "noImplicitAny": true,
     "moduleResolution": "node",

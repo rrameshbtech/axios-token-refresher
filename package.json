@@ -1,7 +1,7 @@
 {
   "name": "axios-token-refresher",
   "version": "1.0.0",
-  "description": "This library enables your axios client to append a valid authorization token to your requests.",
+  "description": "Enables your axios client to attach a valid authorization token to each of your request.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Ramesh Ramalingam",
@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc",
     "test": "mocha -r ts-node/register ./tests/*.test.ts",
-    "prepublish": "npm test"
+    "prepublish": "npm run build && npm test"
   },
   "keywords": [
     "axios",

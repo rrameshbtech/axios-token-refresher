@@ -18,8 +18,8 @@ const wrapTokenRefresher = require('axios-token-refresher');
 const formatTokenResponse = (response) => ({
   {
       accessToken: response.token,
-      expiresIn: response.exipry_duration,
-      tokenType: response.token_type
+      expiresIn: response.exipry_duration, //in seconds
+      tokenType: response.token_type // "Bearer" | "Basic"
     }
 });
 
@@ -37,6 +37,23 @@ const axiosClientWithToken = wrapTokenRefresher(axios.create(), fetchAuthToken);
 ```
 
 Now use `axiosClientWithToken` as like normal axios client which will take care of refreshing & attaching valid auth token with your requests.
+
+Note: authorization token is attached to the requests in below format.
+
+`authorization: '${tokenType} ${authToken}'`
+
+## Optoins
+
+Options can be passed as the third parameter for `wrapTokenRefresher`. It is optional.
+
+```
+const options = {
+  invalidTokenStatuses : [401, 403] //List of HTTP statuses which are sent by server when token is invalid. default value - [401]
+};
+
+const axiosClientWithToken = wrapTokenRefresher(axios.create(), fetchAuthToken, options);
+
+```
 
 ## License
 

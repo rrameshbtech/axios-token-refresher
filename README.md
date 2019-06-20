@@ -57,9 +57,11 @@ Options can be passed as the third parameter for `wrapTokenRefresher`. It is opt
 const options = {
   //List of HTTP statuses which are sent by server when token is invalid.
   invalidTokenStatuses : [401], //default
+
   //Name of token header in which we send the fetched token.
   tokenHeaderName: 'authorization',  //default
-  //`buildTokenHeader` allows to decide how the token header value should be built
+
+  //`buildTokenHeader` allows to decide how the token header value should be built.
   buildTokenHeader: function(tokenDetails) {
     return `${tokenDetails.type} ${tokenDetails.value}`
   } //default

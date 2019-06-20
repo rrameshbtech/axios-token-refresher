@@ -45,9 +45,9 @@ const axiosClientWithToken = wrapTokenRefresher(axios.create(), fetchAuthToken, 
 
 Now use `axiosClientWithToken` as like normal axios client which will take care of refreshing & attaching valid auth token with your requests.
 
-Note: authorization token is attached to the requests in below format by default.
+Note: We can import types from `axios-token-refresher/types` like given below.
 
-`authorization: '${tokenType} ${authToken}'`
+`import { AuthToken } from "axios-token-refresher/types";`
 
 ## Optoins
 

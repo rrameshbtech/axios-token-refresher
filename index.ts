@@ -1,37 +1,43 @@
 import axios, { AxiosInstance } from 'axios';
+import {
+  TokenInformation,
+  TokenRefresherFunc,
+  TokenRefresherOptions,
+  TokenType,
+  AuthToken
+} from './types';
 
-
-export type TokenType = 'Basic' | 'Bearer';
-export type AuthToken = {
-  accessToken: string, tokenType: TokenType, expiresIn: number
-};
-export type TokenRefresherFunc = () => Promise<AuthToken>;
-export interface TokenRefresherOptions  {
-  invalidTokenStatuses: number[]
-};
-type TokenInformation = {
-  value: string;
-  type: TokenType;
-};
+const defaultOptions: TokenRefresherOptions = {
+  invalidTokenStatuses: [401],
+  tokenHeaderName: 'authorization',
+  buildTokenHeader: function (token: TokenInformation) {
+    return `${token.type} ${token.value}`
+  }
+}
 
 export default function wrapTokenRefresher(
-  axiosClient: AxiosInstance, 
-  refreshToken: TokenRefresherFunc, 
-  options: TokenRefresherOptions = {invalidTokenStatuses: [401]}
+  axiosClient: AxiosInstance,
+  refreshToken: TokenRefresherFunc,
+  customOptions?: TokenRefresherOptions
 ): AxiosInstance {
+  const options = {
+    ...defaultOptions,
+    ...customOptions
+  };
+
   const token = new Token(refreshToken);
-  const getAuthorizationHeader = (token: TokenInformation) => `${token.type} ${token.value}`
-  const isInvalidTokenStatus = (errorStatus:number, invalidTokenStatuses:number[]) => invalidTokenStatuses.indexOf(errorStatus) >= 0
+  const getAuthorizationHeader = (token: TokenInformation) => options.buildTokenHeader!(token);
+  const isInvalidTokenStatus = (errorStatus: number, invalidTokenStatuses: number[]) => invalidTokenStatuses.indexOf(errorStatus) >= 0
 
   axiosClient.interceptors.request.use(async (config) => {
     const authToken = await token.get();
-    config.headers.common['authorization'] = getAuthorizationHeader(authToken);
+    config.headers.common[options.tokenHeaderName!] = getAuthorizationHeader(authToken);
     return config;
   });
 
   axiosClient.interceptors.response.use((response) => response, async (error) => {
-    const { response : {status}} = error;
-    if(isInvalidTokenStatus(status, options.invalidTokenStatuses)) {
+    const { response: { status } } = error;
+    if (isInvalidTokenStatus(status, options.invalidTokenStatuses!)) {
       const authToken = await token.get(true);
       const { config: originalRequest } = error;
 
@@ -63,8 +69,8 @@ class Token {
   }
 
   private _isValid() {
-    return this._value && 
-      this._expiresAt && 
+    return this._value &&
+      this._expiresAt &&
       this._expiresAt >= new Date();
   }
 
@@ -88,6 +94,6 @@ class Token {
     }
 
     // @ts-ignore: undefined value assignable error
-    return { value: this._value, type: this._type };  
+    return { value: this._value, type: this._type };
   }
 }

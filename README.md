@@ -32,13 +32,20 @@ const fetchAuthToken = () => axios
   .get('www.auth-server.com/get/token/')
   .then(response => formatTokenResponse(response));
 
-const axiosClientWithToken = wrapTokenRefresher(axios.create(), fetchAuthToken);
+/*
+Optional token configurations. details below.
+*/
+const options = {
+  invalidTokenStatuses : [401, 403]
+}
+
+const axiosClientWithToken = wrapTokenRefresher(axios.create(), fetchAuthToken, options);
 
 ```
 
 Now use `axiosClientWithToken` as like normal axios client which will take care of refreshing & attaching valid auth token with your requests.
 
-Note: authorization token is attached to the requests in below format.
+Note: authorization token is attached to the requests in below format by default.
 
 `authorization: '${tokenType} ${authToken}'`
 
@@ -48,12 +55,25 @@ Options can be passed as the third parameter for `wrapTokenRefresher`. It is opt
 
 ```
 const options = {
-  invalidTokenStatuses : [401, 403] //List of HTTP statuses which are sent by server when token is invalid. default value - [401]
+  //List of HTTP statuses which are sent by server when token is invalid.
+  invalidTokenStatuses : [401], //default
+  //Name of token header in which we send the fetched token.
+  tokenHeaderName: 'authorization',  //default
+  //`buildTokenHeader` allows to decide how the token header value should be built
+  buildTokenHeader: function(tokenDetails) {
+    return `${tokenDetails.type} ${tokenDetails.value}`
+  } //default
 };
 
 const axiosClientWithToken = wrapTokenRefresher(axios.create(), fetchAuthToken, options);
 
 ```
+
+## Contribute
+
+We welcome to contribute buy adding features, fixing bugs or by creating feature requests or submitting issues.
+
+Please contact me at rrameshbtech@gmail.com for more sugestions.
 
 ## License
 

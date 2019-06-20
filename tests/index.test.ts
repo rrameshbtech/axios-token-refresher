@@ -9,8 +9,9 @@ describe('Axios Token Refresher', () => {
   const returnIfAuthMatches = (
     config: AxiosRequestConfig,
     header: string,
-    expected: any) => {
-    return config.headers['authorization'] === header ?
+    expected: any,
+    tokenHeaderName: string = 'authorization') => {
+    return config.headers[tokenHeaderName] === header ?
       [200, expected] :
       [404]
   };
@@ -112,4 +113,43 @@ describe('Axios Token Refresher', () => {
     expect(secondResponse.data).to.equal(expected);
   });
 
+  it('should call api with custom token header key', async () => {
+    const axiosClient = wrapTokenRefresher(axios.create(), mockTokenRefresher, { tokenHeaderName: 'auth' });
+    const mockAxios = new MockAdapter(axiosClient);
+
+    const expected = 'Yay! Test passed';
+    mockAxios
+      .onGet('https://www.test.com/scenarios')
+      .reply((config) =>
+        returnIfAuthMatches(config, 'Bearer test-token', expected, 'auth')
+      );
+
+    const actualResponse = await axiosClient.get('https://www.test.com/scenarios');
+
+    expect(mockTokenRefresher.calledOnce).to.be.true;
+    expect(actualResponse.data).to.equal(expected);
+  });
+
+
+  it('should call api with custom token header value', async () => {
+    const axiosClient = wrapTokenRefresher(
+      axios.create(),
+      mockTokenRefresher,
+      {
+        buildTokenHeader: (tokenDetails) => `testing ${tokenDetails.type} ${tokenDetails.value}`
+      });
+    const mockAxios = new MockAdapter(axiosClient);
+
+    const expected = 'Yay! Test passed';
+    mockAxios
+      .onGet('https://www.test.com/scenarios')
+      .reply((config) =>
+        returnIfAuthMatches(config, 'testing Bearer test-token', expected)
+      );
+
+    const actualResponse = await axiosClient.get('https://www.test.com/scenarios');
+
+    expect(mockTokenRefresher.calledOnce).to.be.true;
+    expect(actualResponse.data).to.equal(expected);
+  });
 });

@@ -7,9 +7,9 @@ export type AuthToken = {
 export type TokenRefresherFunc = () => Promise<AuthToken>;
 
 export interface TokenRefresherOptions {
-  invalidTokenStatuses?: number[],
-  tokenHeaderName?: string,
-  buildTokenHeader?: (token: TokenInformation) => string
+  invalidTokenStatuses: number[],
+  tokenHeaderName: string,
+  buildTokenHeader: (token: TokenInformation) => string
 };
 
 export type TokenInformation = {

@@ -18,7 +18,7 @@ const defaultOptions: TokenRefresherOptions = {
 export default function wrapTokenRefresher(
   axiosClient: AxiosInstance,
   refreshToken: TokenRefresherFunc,
-  customOptions?: TokenRefresherOptions
+  customOptions?: Partial<TokenRefresherOptions>
 ): AxiosInstance {
   const options = {
     ...defaultOptions,
@@ -26,18 +26,18 @@ export default function wrapTokenRefresher(
   };
 
   const token = new Token(refreshToken);
-  const getAuthorizationHeader = (token: TokenInformation) => options.buildTokenHeader!(token);
+  const getAuthorizationHeader = (token: TokenInformation) => options.buildTokenHeader(token);
   const isInvalidTokenStatus = (errorStatus: number, invalidTokenStatuses: number[]) => invalidTokenStatuses.indexOf(errorStatus) >= 0
 
   axiosClient.interceptors.request.use(async (config) => {
     const authToken = await token.get();
-    config.headers.common[options.tokenHeaderName!] = getAuthorizationHeader(authToken);
+    config.headers.common[options.tokenHeaderName] = getAuthorizationHeader(authToken);
     return config;
   });
 
   axiosClient.interceptors.response.use((response) => response, async (error) => {
     const { response: { status } } = error;
-    if (isInvalidTokenStatus(status, options.invalidTokenStatuses!)) {
+    if (isInvalidTokenStatus(status, options.invalidTokenStatuses)) {
       const authToken = await token.get(true);
       const { config: originalRequest } = error;
 

@@ -3,4 +3,4 @@ node_js:
   - 10.16.0
 cache: npm
 before_script:
-  - npm audit --json >> $TRAVIS_BUILD_DIR/audit/report.json
+  - npm audit

@@ -93,7 +93,6 @@ class Token {
       await this._refresh();
     }
 
-    // @ts-ignore: undefined value assignable error
-    return { value: this._value, type: this._type };
+    return { value: this._value!, type: this._type! };
   }
 }

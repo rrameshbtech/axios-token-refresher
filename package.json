@@ -4,7 +4,8 @@
   "description": "Enables your axios client to attach a valid authorization token to each of your request.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "author": "Ramesh Ramalingam",
+  "author": "Ramesh Ramalingam <rrameshbtech@gmail.com>",
+  "homepage": "https://github.com/rrameshbtech/axios-token-refresher#readme",
   "license": "MIT",
   "repository": { "type":"git", "url": "https://github.com/rrameshbtech/axios-token-refresher.git"},
   "private": false,
@@ -36,5 +37,8 @@
   "dependencies": {
     "@types/axios": "^0.14.0",
     "axios": "^0.19.0"
+  },
+  "engines": {
+    "node":">=10.16.0"
   }
 }

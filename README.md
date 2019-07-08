@@ -1,4 +1,5 @@
 # axios-token-refresher
+[![Build Status](https://travis-ci.org/rrameshbtech/axios-token-refresher.svg?branch=master)](https://travis-ci.org/rrameshbtech/axios-token-refresher)
 
 This library enables your axios client to append a valid authorization token to your requests.
 

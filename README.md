@@ -19,7 +19,7 @@ const wrapTokenRefresher = require('axios-token-refresher');
 const formatTokenResponse = (response) => ({
   {
       accessToken: response.token,
-      expiresIn: response.exipry_duration, // in seconds
+      expiresIn: response.expiry_duration, // in seconds
       tokenType: response.token_type // "Bearer" | "Basic"
     }
 });
@@ -50,7 +50,7 @@ Note: We can import types from `axios-token-refresher/types` like given below.
 
 `import { AuthToken } from "axios-token-refresher/types";`
 
-## Optoins
+## Options
 
 Options can be passed as the third parameter for `wrapTokenRefresher`. It is optional.
 
@@ -75,7 +75,7 @@ const axiosClientWithToken = wrapTokenRefresher(axios.create(), fetchAuthToken, 
 
 ## Contribute
 
-We welcome to contribute buy adding features, fixing bugs or by creating feature requests or submitting issues.
+We welcome to contribute by adding features, fixing bugs or by creating feature requests or submitting issues.
 
 Please contact me at rrameshbtech@gmail.com for more sugestions.
 

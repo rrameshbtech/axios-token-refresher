@@ -1,6 +1,6 @@
 {
   "name": "axios-token-refresher",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Enables your axios client to attach a valid authorization token to each of your request.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

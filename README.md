@@ -1,4 +1,5 @@
 # axios-token-refresher
+
 [![Build Status](https://travis-ci.org/rrameshbtech/axios-token-refresher.svg?branch=master)](https://travis-ci.org/rrameshbtech/axios-token-refresher)
 
 This library enables your axios client to append a valid authorization token to your requests.
@@ -31,7 +32,7 @@ token is expired.
 */
 const fetchAuthToken = () => axios
   .get('www.auth-server.com/get/token/')
-  .then(response => formatTokenResponse(response));
+  .then(response => formatTokenResponse(response.data));
 
 /*
 Optional token configurations. details below.
